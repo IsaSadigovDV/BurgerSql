@@ -74,17 +74,22 @@ void UpdateProduct()
     Console.WriteLine("Enter product Id");
     int.TryParse(Console.ReadLine(), out int Id);
     SqlCommand sqlCommand1 = new SqlCommand($"Select * FROM Products WHERE Id = {Id}", sqlConnection);
-    sqlCommand1.ExecuteNonQuery();
     sqlConnection.Open();
-    
-    Console.WriteLine("Add product name");
-    string productName = Console.ReadLine();
-    
-    Console.WriteLine("Enter product Id");
-    int.TryParse(Console.ReadLine(), out int Id);
-
-    SqlCommand sqlCommand2 = new SqlCommand($"Update Products Set Name($'{productName},{Id}')", sqlConnection);
-    sqlCommand2.ExecuteNonQuery();
+    SqlDataReader dataReader = sqlCommand1.ExecuteReader(); 
     sqlConnection.Close();
 
+    if (dataReader.Read())
+    {
+        sqlConnection.Open();
+        Console.WriteLine("Add product name");
+        string productName = Console.ReadLine();
+
+        SqlCommand sqlCommand2 = new SqlCommand($"Update Products Set Name($'{productName},{Id}')", sqlConnection);
+        sqlCommand2.ExecuteNonQuery();
+        sqlConnection.Close();
+    }
+    else
+    {
+        Console.WriteLine("Enter correct product id");
+    }
 }
